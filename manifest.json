@@ -1,1 +1,9 @@
+{
+"domain": "delayed_charging_start",
+"name": "Delayed Charging Start",
+"version": "1.0",
+"documentation": "https://your-docs-url",
+"requirements": [],
+"dependencies": []
+}
 
