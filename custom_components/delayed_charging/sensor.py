@@ -1,6 +1,7 @@
 import logging
 from datetime import timedelta
 
+from coordinator import ElectricityPriceCoordinator
 from homeassistant.components.sensor import (
     SensorEntity,
     SensorDeviceClass,
@@ -13,6 +14,8 @@ _LOGGER = logging.getLogger(__name__)
 DEFAULT_NAME = "Delayed Charging Start"
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
+    coordinator = ElectricityPriceCoordinator(hass)
+    await coordinator.async_config_entry_first_refresh()
     """Set up the sensor platform asynchronously."""
     async_add_entities([DelayedChargingStart()])
 

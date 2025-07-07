@@ -1,0 +1,10 @@
+[tool.poetry]
+name = "delayed_charging"
+version = "0.1.0"
+description = "Home Assistant custom component for delayed charging based on electricity prices"
+authors = ["Mark Pfeifle"]
+packages = [{ include = "custom_components" }]
+
+[tool.poetry.dependencies]
+python = ">=3.13.2, <4.0"
+homeassistant = "^2025.7.1"
