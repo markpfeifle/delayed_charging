@@ -4,7 +4,7 @@ import datetime
 
 _LOGGER = logging.getLogger(__name__)
 
-THRESH = 40
+THRESH = 65
 
 SYSTEM_TZ = datetime.datetime.now().astimezone().tzinfo
 
@@ -95,8 +95,18 @@ def delayed_charging_is_active_today(
     return any(item[1] < THRESH for item in timeseries)
 
 
-def get_current_price(timeseries: list[tuple[datetime.datetime, float]]) -> float:
+def get_current_price(
+    timeseries: list[tuple[datetime.datetime, float]],
+) -> float | None:
     now = datetime.datetime.now(SYSTEM_TZ)
-    for dt, price in timeseries:
-        if dt >= now:
-            return price
+    relative_time_series_in_past = [
+        (now - dt, price) for dt, price in timeseries if dt <= now
+    ]
+
+    if len(relative_time_series_in_past) == 0:
+        _LOGGER.error("No current price data available.")
+        return None
+    else:
+        current_price = relative_time_series_in_past[-1][1]
+        _LOGGER.debug("Current price: %s", current_price)
+        return current_price

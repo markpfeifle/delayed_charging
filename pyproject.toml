@@ -8,3 +8,4 @@ packages = [{ include = "custom_components" }]
 [tool.poetry.dependencies]
 python = ">=3.13.2, <4.0"
 homeassistant = "^2025.7.1"
+ipython = "^9.4.0"
