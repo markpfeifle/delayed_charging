@@ -1,5 +1,4 @@
 from functools import cached_property
-import datetime
 
 from coordinator import ElectricityPriceCoordinator
 from homeassistant.components.sensor import (
@@ -13,7 +12,6 @@ from homeassistant.components.binary_sensor import (
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
-    DataUpdateCoordinator,
 )
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
@@ -43,14 +41,14 @@ async def async_setup_platform(
     )
 
 
-class DelayedChargingStart(
-    CoordinatorEntity[DataUpdateCoordinator[list[tuple[datetime.datetime, float]]]],
+class DelayedChargingStart(  # type: ignore[override]
+    CoordinatorEntity[ElectricityPriceCoordinator],
     SensorEntity,
 ):
 
     def __init__(
         self,
-        coordinator: DataUpdateCoordinator[list[tuple[datetime.datetime, float]]],
+        coordinator: ElectricityPriceCoordinator,
         name: str = "Delayed Charging Start",
     ):
         """Pass coordinator to CoordinatorEntity."""
@@ -63,7 +61,7 @@ class DelayedChargingStart(
         return self._name
 
     @property
-    def native_value(self):
+    def native_value(self):  # type: ignore[override]
         return self._attr_native_value
 
     @cached_property
@@ -81,13 +79,13 @@ class DelayedChargingStart(
         self.async_write_ha_state()
 
 
-class DelayedChargingActive(
-    CoordinatorEntity[DataUpdateCoordinator[list[tuple[datetime.datetime, float]]]],
+class DelayedChargingActive(  # type: ignore[override]
+    CoordinatorEntity[ElectricityPriceCoordinator],
     BinarySensorEntity,
 ):
     def __init__(
         self,
-        coordinator: DataUpdateCoordinator[list[tuple[datetime.datetime, float]]],
+        coordinator: ElectricityPriceCoordinator,
         name: str = "Delayed Charging Active",
     ):
         super().__init__(coordinator)
@@ -99,7 +97,7 @@ class DelayedChargingActive(
         return self._name
 
     @property
-    def is_on(self):
+    def is_on(self):  # type: ignore[override]
         return self._attr_is_on
 
     @cached_property
@@ -113,33 +111,48 @@ class DelayedChargingActive(
         self.async_write_ha_state()
 
 
-class CurrentPriceSensor(
-    CoordinatorEntity[DataUpdateCoordinator[list[tuple[datetime.datetime, float]]]],
+class CurrentPriceSensor(  # type: ignore[override]
+    CoordinatorEntity[ElectricityPriceCoordinator],
     SensorEntity,
 ):
     def __init__(
         self,
-        coordinator: DataUpdateCoordinator[list[tuple[datetime.datetime, float]]],
+        coordinator: ElectricityPriceCoordinator,
         name: str = "Current Price",
     ):
         super().__init__(coordinator)
         self._name = name
         self._attr_native_value = None
+        self._attr_extra_state_attributes = {}
 
     @cached_property
     def name(self):
         return self._name
 
-    @property
-    def native_value(self):
-        return self._attr_native_value
-
     @cached_property
     def device_class(self):
         return SensorDeviceClass.MONETARY
+
+    @property
+    def native_value(self):  # type: ignore[override]
+        return self._attr_native_value
+
+    @property
+    def extra_state_attributes(self):  # type: ignore[override]
+        """Expose the daily price series for ApexCharts Card."""
+        return self._attr_extra_state_attributes or {"apexchart_series": []}
 
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
         self._attr_native_value = get_current_price(self.coordinator.data)
+        self._attr_extra_state_attributes = {
+            "apexchart_series": [
+                {
+                    "x": dt.isoformat(),
+                    "y": price,
+                }
+                for dt, price in (self.coordinator.data or [])
+            ]
+        }
         self.async_write_ha_state()
