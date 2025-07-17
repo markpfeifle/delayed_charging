@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 import asyncio
 import logging
 import pprint
+
 from custom_components.delayed_charging.service import (
     delayed_charging_is_active_today,
     get_charging_start,
@@ -12,16 +12,18 @@ from custom_components.delayed_charging.service import (
 
 logging.basicConfig(level=logging.DEBUG)
 
+THRESH = 0.0
+
 prices = asyncio.run(get_pricing_info())
 pprint.pprint(prices)
 
-charging_start = get_charging_start(prices)
+charging_start = get_charging_start(prices, THRESH)
 if charging_start:
     print(f"Charging should start at: {charging_start}")
 else:
     print("No suitable charging start time found.")
 
-delayed_charging_active = delayed_charging_is_active_today(prices)
+delayed_charging_active = delayed_charging_is_active_today(prices, THRESH)
 if delayed_charging_active:
     print("Delayed charging is active today.")
 else:

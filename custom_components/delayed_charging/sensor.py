@@ -1,26 +1,17 @@
 from functools import cached_property
 
-from homeassistant.components.sensor import (
-    SensorEntity,
-    SensorDeviceClass,
-)
+from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers.update_coordinator import (
-    CoordinatorEntity,
-)
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-
+from custom_components.delayed_charging.const import DEFAULT_THRESH
+from custom_components.delayed_charging.coordinator import ElectricityPriceCoordinator
 from custom_components.delayed_charging.service import (
     get_charging_start,
     get_current_price,
 )
-from custom_components.delayed_charging.coordinator import (
-    ElectricityPriceCoordinator,
-)
-
-from custom_components.delayed_charging.const import DEFAULT_THRESH
 
 
 async def async_setup_entry(

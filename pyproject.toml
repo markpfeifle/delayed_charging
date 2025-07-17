@@ -9,3 +9,4 @@ packages = [{ include = "custom_components" }]
 python = ">=3.13.2, <4.0"
 homeassistant = "^2025.7.1"
 ipython = "^9.4.0"
+pre-commit = "^4.2.0"

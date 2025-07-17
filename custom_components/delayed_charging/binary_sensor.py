@@ -1,24 +1,17 @@
 from functools import cached_property
 
 from homeassistant.components.binary_sensor import (
-    BinarySensorEntity,
     BinarySensorDeviceClass,
+    BinarySensorEntity,
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers.update_coordinator import (
-    CoordinatorEntity,
-)
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-
-from custom_components.delayed_charging.service import (
-    delayed_charging_is_active_today,
-)
-from custom_components.delayed_charging.coordinator import (
-    ElectricityPriceCoordinator,
-)
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from custom_components.delayed_charging.const import DEFAULT_THRESH
+from custom_components.delayed_charging.coordinator import ElectricityPriceCoordinator
+from custom_components.delayed_charging.service import delayed_charging_is_active_today
 
 
 async def async_setup_entry(
