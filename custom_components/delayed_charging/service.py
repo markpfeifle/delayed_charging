@@ -4,8 +4,6 @@ import datetime
 
 _LOGGER = logging.getLogger(__name__)
 
-THRESH = 65
-
 SYSTEM_TZ = datetime.datetime.now().astimezone().tzinfo
 
 
@@ -77,9 +75,9 @@ async def get_pricing_info():
 
 def get_charging_start(
     timeseries: list[tuple[datetime.datetime, float]],
+    threshold: float,
 ) -> datetime.datetime | None:
-
-    series_neg = [item for item in timeseries if item[1] < THRESH]
+    series_neg = [item for item in timeseries if item[1] < threshold]
 
     if len(series_neg) == 0:
         charging_start = None
@@ -91,8 +89,9 @@ def get_charging_start(
 
 def delayed_charging_is_active_today(
     timeseries: list[tuple[datetime.datetime, float]],
+    threshold: float,
 ) -> bool:
-    return any(item[1] < THRESH for item in timeseries)
+    return any(item[1] < threshold for item in timeseries)
 
 
 def get_current_price(

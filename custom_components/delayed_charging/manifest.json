@@ -1,9 +1,11 @@
 {
-"domain": "delayed_charging_start",
-"name": "Delayed Charging Start",
+"domain": "delayed_charging",
+"name": "Delayed Charging",
 "version": "1.0",
 "documentation": "https://your-docs-url",
-"requirements": [],
-"dependencies": []
+"requirements": ["aiohttp"],
+"dependencies": [],
+"config_flow": true,
+"codeowners": ["@markpfeifle"]
 }
 

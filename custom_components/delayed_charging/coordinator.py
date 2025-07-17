@@ -1,5 +1,6 @@
 from datetime import timedelta
 import datetime
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.core import HomeAssistant
 
@@ -13,13 +14,14 @@ _LOGGER = logging.getLogger(__name__)
 class ElectricityPriceCoordinator(
     DataUpdateCoordinator[list[tuple[datetime.datetime, float]]]
 ):
-    def __init__(self, hass: HomeAssistant):
+    def __init__(self, hass: HomeAssistant, config_entry: ConfigEntry):
         """Initialize the coordinator."""
+        self.config_entry = config_entry
         super().__init__(
             hass,
             _LOGGER,
             name="Electricity Price Coordinator",
-            update_interval=timedelta(minutes=5),
+            update_interval=timedelta(minutes=2),
             always_update=False,
         )
 
