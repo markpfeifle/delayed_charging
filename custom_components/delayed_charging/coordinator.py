@@ -22,7 +22,7 @@ class ElectricityPriceCoordinator(
             _LOGGER,
             name="Electricity Price Coordinator",
             update_interval=timedelta(minutes=2),
-            always_update=False,
+            always_update=True,
         )
 
     async def _async_update_data(self):
