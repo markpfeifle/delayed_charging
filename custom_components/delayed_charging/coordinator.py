@@ -11,9 +11,7 @@ from custom_components.delayed_charging.service import get_pricing_info
 _LOGGER = logging.getLogger(__name__)
 
 
-class ElectricityPriceCoordinator(
-    DataUpdateCoordinator[list[tuple[datetime.datetime, float]]]
-):
+class ElectricityPriceCoordinator(DataUpdateCoordinator[list[tuple[datetime.datetime, float]]]):
     def __init__(self, hass: HomeAssistant, config_entry: ConfigEntry):
         """Initialize the coordinator."""
         self.config_entry = config_entry

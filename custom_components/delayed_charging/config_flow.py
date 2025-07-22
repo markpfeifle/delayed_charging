@@ -11,9 +11,7 @@ class DelayedChargingConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     VERSION = 1
 
-    async def async_step_user(
-        self, user_input: dict[str, Any] | None = None
-    ) -> config_entries.ConfigFlowResult:
+    async def async_step_user(self, user_input: dict[str, Any] | None = None) -> config_entries.ConfigFlowResult:
         """Handle the initial step."""
         errors: dict[str, str] = {}
 
@@ -27,9 +25,7 @@ class DelayedChargingConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=vol.Schema(
                 {
-                    vol.Required(CONF_THRESH, default=DEFAULT_THRESH): vol.Coerce(
-                        float
-                    ),
+                    vol.Required(CONF_THRESH, default=DEFAULT_THRESH): vol.Coerce(float),
                 }
             ),
             errors=errors,

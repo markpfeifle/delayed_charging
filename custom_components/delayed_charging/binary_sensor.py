@@ -58,7 +58,5 @@ class DelayedChargingActive(  # type: ignore[override]
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
         threshold = self._config_entry.data.get("threshold", DEFAULT_THRESH)
-        self._attr_is_on = delayed_charging_is_active_today(
-            self.coordinator.data, threshold
-        )
+        self._attr_is_on = delayed_charging_is_active_today(self.coordinator.data, threshold)
         self.async_write_ha_state()

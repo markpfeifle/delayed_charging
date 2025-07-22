@@ -39,9 +39,7 @@ async def get_pricing_info():
 
     async with aiohttp.ClientSession() as session:
         try:
-            async with session.get(
-                "https://www.smard.de/app/chart_data/4169/DE/index_quarterhour.json"
-            ) as response:
+            async with session.get("https://www.smard.de/app/chart_data/4169/DE/index_quarterhour.json") as response:
                 data = await response.json()
                 timestamps = data.get("timestamps")
 
@@ -65,9 +63,7 @@ async def get_pricing_info():
             return empty_series
 
     filtered_series = [
-        (dt, item[1])
-        for item in timeseries
-        if same_date(dt := ts2dt(item[0]), last_midnight) and item[1] is not None
+        (dt, item[1]) for item in timeseries if same_date(dt := ts2dt(item[0]), last_midnight) and item[1] is not None
     ]
     if len(filtered_series) == 0:
         _LOGGER.error("No time series data could be retrieved.")
@@ -99,9 +95,7 @@ def get_current_price(
     timeseries: list[tuple[datetime.datetime, float]],
 ) -> float | None:
     now = datetime.datetime.now(SYSTEM_TZ)
-    relative_time_series_in_past = [
-        (now - dt, price) for dt, price in timeseries if dt <= now
-    ]
+    relative_time_series_in_past = [(now - dt, price) for dt, price in timeseries if dt <= now]
 
     if len(relative_time_series_in_past) == 0:
         _LOGGER.error("No current price data available.")
