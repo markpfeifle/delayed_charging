@@ -7,14 +7,14 @@ from custom_components.delayed_charging.service import (
     delayed_charging_is_active_today,
     get_charging_start,
     get_current_price,
-    get_pricing_info,
 )
+from custom_components.delayed_charging.smard import get_pricing_info
 
 logging.basicConfig(level=logging.DEBUG)
 
 THRESH = 0.0
 
-prices = asyncio.run(get_pricing_info())
+prices = asyncio.run(get_pricing_info("France"))
 pprint.pprint(prices)
 
 charging_start = get_charging_start(prices, THRESH)

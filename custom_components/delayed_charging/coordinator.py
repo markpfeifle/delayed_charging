@@ -6,7 +6,8 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from custom_components.delayed_charging.service import get_pricing_info
+from custom_components.delayed_charging.const import CONF_COUNTRY, DEFAULT_COUNTRY
+from custom_components.delayed_charging.smard import get_pricing_info
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -25,6 +26,7 @@ class ElectricityPriceCoordinator(DataUpdateCoordinator[list[tuple[datetime.date
 
     async def _async_update_data(self):
         try:
-            return await get_pricing_info()
+            country = self.config_entry.data.get(CONF_COUNTRY, DEFAULT_COUNTRY)
+            return await get_pricing_info(country)
         except Exception as err:
             raise UpdateFailed(f"API error: {err}") from err
