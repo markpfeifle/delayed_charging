@@ -1,12 +1,12 @@
 {
 "domain": "delayed_charging",
 "name": "Delayed Charging",
-"version": "1.0",
-"documentation": "https://your-docs-url",
-"requirements": ["aiohttp"],
-"dependencies": [],
-"config_flow": true,
 "codeowners": ["@markpfeifle"],
-"iot_class": "cloud_polling"
+"config_flow": true,
+"documentation": "https://your-docs-url",
+"dependencies": [],
+"iot_class": "cloud_polling",
+"requirements": ["aiohttp"],
+"version": "1.0"
 }
 
