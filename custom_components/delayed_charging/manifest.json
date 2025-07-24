@@ -3,8 +3,8 @@
 "name": "Delayed Charging",
 "codeowners": ["@markpfeifle"],
 "config_flow": true,
-"documentation": "https://your-docs-url",
 "dependencies": [],
+"documentation": "https://your-docs-url",
 "iot_class": "cloud_polling",
 "requirements": ["aiohttp"],
 "version": "1.0"
