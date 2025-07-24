@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 THRESH = 0.0
 
-prices = asyncio.run(get_pricing_info("France"))
+prices = asyncio.run(get_pricing_info("254"))
 pprint.pprint(prices)
 
 charging_start = get_charging_start(prices, THRESH)

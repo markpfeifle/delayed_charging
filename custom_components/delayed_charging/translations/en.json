@@ -1,0 +1,25 @@
+{
+  "title": "Delayed Charging",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configure country & price threshold",
+        "data": {
+          "country_id": "Country (as defined at smard.de)",
+          "threshold": "Threshold (in €/MWh) to define negative prices"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configure country & price threshold",
+        "data": {
+          "country_id": "Country (as defined at smard.de)",
+          "threshold": "Threshold (in €/MWh) to define negative prices"
+        }
+      }
+    }
+  }
+}

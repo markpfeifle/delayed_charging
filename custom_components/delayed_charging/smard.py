@@ -2,41 +2,43 @@ import datetime
 import logging
 
 import aiohttp
-
-from custom_components.delayed_charging.service import SYSTEM_TZ, dtfmt, same_date, ts2dt
+from custom_components.delayed_charging.service import (
+    SYSTEM_TZ,
+    dtfmt,
+    same_date,
+    ts2dt,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
 SMARD_COUNTRIES = {
-    "Germany/Luxembourg": 4169,
-    "Neighboring DE/LU": 5078,
-    "Belgium": 4996,
-    "Norway 2": 4997,
-    "Austria": 4170,
-    "Denmark 1": 252,
-    "Denmark 2": 253,
-    "France": 254,
-    "Italy (North)": 255,
-    "Netherlands": 256,
-    "Poland": 257,
-    "Sweden 4": 258,
-    "Switzerland": 259,
-    "Slovenia": 260,
-    "Czech Republic": 261,
-    "Hungary": 262,
+    "4169": "Germany/Luxembourg",
+    "5078": "Neighboring DE/LU",
+    "4996": "Belgium",
+    "4997": "Norway 2",
+    "4170": "Austria",
+    "252": "Denmark 1",
+    "253": "Denmark 2",
+    "254": "France",
+    "255": "Italy (North)",
+    "256": "Netherlands",
+    "257": "Poland",
+    "258": "Sweden 4",
+    "259": "Switzerland",
+    "260": "Slovenia",
+    "261": "Czech Republic",
+    "262": "Hungary",
 }
 
 
-async def get_pricing_info(country: str = "Germany/Luxembourg"):
+async def get_pricing_info(country_id: str = "4169"):
     """Get electricity price as function of time for current day."""
 
     empty_series: list[tuple[datetime.datetime, float]] = []
 
-    if country not in SMARD_COUNTRIES:
-        _LOGGER.error("Country %s not supported. Supported countries: %s", country, list(SMARD_COUNTRIES.keys()))
+    if country_id not in SMARD_COUNTRIES:
+        _LOGGER.error("Country ID %s not supported.")
         return empty_series
-
-    country_id = SMARD_COUNTRIES[country]
 
     now = datetime.datetime.now(SYSTEM_TZ)
     today = now.date()
@@ -76,7 +78,9 @@ async def get_pricing_info(country: str = "Germany/Luxembourg"):
             return empty_series
 
     filtered_series = [
-        (dt, item[1]) for item in timeseries if same_date(dt := ts2dt(item[0]), last_midnight) and item[1] is not None
+        (dt, item[1])
+        for item in timeseries
+        if same_date(dt := ts2dt(item[0]), last_midnight) and item[1] is not None
     ]
     if len(filtered_series) == 0:
         _LOGGER.error("No time series data could be retrieved.")

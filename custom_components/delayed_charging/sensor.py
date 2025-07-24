@@ -1,10 +1,5 @@
 from functools import cached_property
-
-from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from typing import cast
 
 from custom_components.delayed_charging.const import DEFAULT_THRESH
 from custom_components.delayed_charging.coordinator import ElectricityPriceCoordinator
@@ -12,6 +7,12 @@ from custom_components.delayed_charging.service import (
     get_charging_start,
     get_current_price,
 )
+
+from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 
 async def async_setup_entry(
@@ -42,7 +43,7 @@ class DelayedChargingStart(  # type: ignore[override]
         super().__init__(coordinator)
         self._name = name
         self._attr_native_value = None
-        self._config_entry = coordinator.config_entry
+        self._config_entry = cast(ConfigEntry, coordinator.config_entry)
 
     @cached_property
     def name(self):
@@ -63,7 +64,7 @@ class DelayedChargingStart(  # type: ignore[override]
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
-        threshold = self._config_entry.data.get("threshold", DEFAULT_THRESH)
+        threshold = self._config_entry.options.get("threshold", DEFAULT_THRESH)
         self._attr_native_value = get_charging_start(self.coordinator.data, threshold)
         self.async_write_ha_state()
 
@@ -81,7 +82,7 @@ class CurrentPriceSensor(  # type: ignore[override]
         self._name = name
         self._attr_native_value = None
         self._attr_extra_state_attributes = {}
-        self._config_entry = coordinator.config_entry
+        self._config_entry = cast(ConfigEntry, coordinator.config_entry)
 
     @cached_property
     def name(self):
