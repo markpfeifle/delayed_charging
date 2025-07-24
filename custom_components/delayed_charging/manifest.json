@@ -6,6 +6,7 @@
 "requirements": ["aiohttp"],
 "dependencies": [],
 "config_flow": true,
-"codeowners": ["@markpfeifle"]
+"codeowners": ["@markpfeifle"],
+"iot_class": "cloud_polling"
 }
 
