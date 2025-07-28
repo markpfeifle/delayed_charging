@@ -53,7 +53,7 @@ async def test_get_pricing_info_success(mock_datetime_now: MagicMock):
     mock_response.json.side_effect = [TIMESTAMPS_HAPPY, TIMESERIES_HAPPY]
 
     with patch("aiohttp.ClientSession.get", return_value=mock_response):
-        result = await get_pricing_info("Germany/Luxembourg")
+        result = await get_pricing_info("4169")
 
         assert len(result) == 3
         assert result[0][1] == 15.0
@@ -77,7 +77,7 @@ async def test_get_pricing_info_empty_timestamps(mock_datetime_now: MagicMock):
     mock_response.json.return_value = TIMESTAMPS_EMPTY
 
     with patch("aiohttp.ClientSession.get", return_value=mock_response):
-        result = await get_pricing_info("Germany/Luxembourg")
+        result = await get_pricing_info("4169")
         assert result == []
 
 
@@ -88,7 +88,7 @@ async def test_get_pricing_info_empty_timeseries(mock_datetime_now: MagicMock):
     mock_response.json.side_effect = [TIMESTAMPS_HAPPY, TIMESERIES_EMPTY]
 
     with patch("aiohttp.ClientSession.get", return_value=mock_response):
-        result = await get_pricing_info("Germany/Luxembourg")
+        result = await get_pricing_info("4169")
         assert result == []
 
 
@@ -99,7 +99,7 @@ async def test_get_pricing_info_invalid_json(mock_datetime_now: MagicMock):
     mock_response.json.side_effect = [INVALID_JSON, INVALID_JSON]
 
     with patch("aiohttp.ClientSession.get", return_value=mock_response):
-        result = await get_pricing_info("Germany/Luxembourg")
+        result = await get_pricing_info("4169")
         assert result == []
 
 
@@ -109,7 +109,7 @@ async def test_get_pricing_info_client_error(mock_datetime_now: MagicMock):
     mock_response.__aenter__.side_effect = ClientError()
 
     with patch("aiohttp.ClientSession.get", return_value=mock_response):
-        result = await get_pricing_info("Germany/Luxembourg")
+        result = await get_pricing_info("4169")
         assert result == []
 
 
@@ -119,5 +119,5 @@ async def test_get_pricing_info_payload_error(mock_datetime_now: MagicMock):
     mock_response.__aenter__.side_effect = ClientPayloadError()
 
     with patch("aiohttp.ClientSession.get", return_value=mock_response):
-        result = await get_pricing_info("Germany/Luxembourg")
+        result = await get_pricing_info("4169")
         assert result == []
