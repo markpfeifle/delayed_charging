@@ -58,6 +58,10 @@ async def get_pricing_info(country_id: str = "4169"):
                 data = await response.json()
                 timestamps = data.get("timestamps")
 
+            if not timestamps:
+                _LOGGER.error("No timestamps found in response.")
+                return empty_series
+
             req_ts = None
             for ts in reversed(timestamps):
                 if ts2dt(ts) <= last_midnight:
@@ -65,6 +69,10 @@ async def get_pricing_info(country_id: str = "4169"):
                     break
         except (aiohttp.ClientError, aiohttp.ClientPayloadError) as e:
             _LOGGER.error("Error fetching timestamp data from SMARD: %s", e)
+            return empty_series
+
+        if req_ts is None:
+            _LOGGER.error("No valid timestamp found before last midnight.")
             return empty_series
 
         try:

@@ -11,6 +11,8 @@ homeassistant = "^2025.7.1"
 ipython = "^9.4.0"
 pre-commit = "^4.2.0"
 commitizen = "^4.8.3"
+pytest-homeassistant-custom-component = "^0.13.263"
+pytest-asyncio = "^1.0.0"
 
 [tool.ruff]
 line-length = 125
@@ -73,3 +75,6 @@ pythonPlatform = "Linux"
 typeCheckingMode = "strict"
 venvPath = "."
 venv = ".venv"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
