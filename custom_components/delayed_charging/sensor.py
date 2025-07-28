@@ -1,18 +1,19 @@
 from functools import cached_property
 from typing import cast
 
+from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import CURRENCY_EURO, UnitOfEnergy
+from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
+
 from custom_components.delayed_charging.const import DEFAULT_THRESH
 from custom_components.delayed_charging.coordinator import ElectricityPriceCoordinator
 from custom_components.delayed_charging.service import (
     get_charging_start,
     get_current_price,
 )
-
-from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 
 async def async_setup_entry(
@@ -77,12 +78,14 @@ class CurrentPriceSensor(  # type: ignore[override]
         self,
         coordinator: ElectricityPriceCoordinator,
         name: str = "Current Price",
+        unit: str = f"{CURRENCY_EURO}/{UnitOfEnergy.MEGA_WATT_HOUR}",
     ):
         super().__init__(coordinator)
         self._name = name
         self._attr_native_value = None
         self._attr_extra_state_attributes = {}
         self._config_entry = cast(ConfigEntry, coordinator.config_entry)
+        self._attr_native_unit_of_measurement = unit
 
     @cached_property
     def name(self):

@@ -2,6 +2,7 @@ import datetime
 import logging
 
 import aiohttp
+
 from custom_components.delayed_charging.service import (
     SYSTEM_TZ,
     dtfmt,
@@ -86,9 +87,7 @@ async def get_pricing_info(country_id: str = "4169"):
             return empty_series
 
     filtered_series = [
-        (dt, item[1])
-        for item in timeseries
-        if same_date(dt := ts2dt(item[0]), last_midnight) and item[1] is not None
+        (dt, item[1]) for item in timeseries if same_date(dt := ts2dt(item[0]), last_midnight) and item[1] is not None
     ]
     if len(filtered_series) == 0:
         _LOGGER.error("No time series data could be retrieved.")

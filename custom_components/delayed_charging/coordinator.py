@@ -1,21 +1,19 @@
 import datetime
-from datetime import timedelta
 import logging
+from datetime import timedelta
 from typing import cast
-
-from custom_components.delayed_charging.const import CONF_COUNTRY_ID, DEFAULT_COUNTRY_ID
-from custom_components.delayed_charging.smard import get_pricing_info
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
+from custom_components.delayed_charging.const import CONF_COUNTRY_ID, DEFAULT_COUNTRY_ID
+from custom_components.delayed_charging.smard import get_pricing_info
+
 _LOGGER = logging.getLogger(__name__)
 
 
-class ElectricityPriceCoordinator(
-    DataUpdateCoordinator[list[tuple[datetime.datetime, float]]]
-):
+class ElectricityPriceCoordinator(DataUpdateCoordinator[list[tuple[datetime.datetime, float]]]):
     """Coordinator to fetch electricity prices from a REST API."""
 
     def __init__(self, hass: HomeAssistant, config_entry: ConfigEntry):

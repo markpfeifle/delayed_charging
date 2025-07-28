@@ -1,7 +1,6 @@
 from typing import Any
 
 import voluptuous as vol
-
 from homeassistant import config_entries
 from homeassistant.core import callback
 
@@ -35,15 +34,11 @@ class DelayedChargingConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     VERSION = 1
 
-    async def async_step_user(
-        self, user_input: dict[str, Any] | None = None
-    ) -> config_entries.ConfigFlowResult:
+    async def async_step_user(self, user_input: dict[str, Any] | None = None) -> config_entries.ConfigFlowResult:
         """Handle the initial step."""
 
         if user_input is not None:
-            return self.async_create_entry(
-                title="Delayed Charging", data=user_input, options=user_input
-            )
+            return self.async_create_entry(title="Delayed Charging", data=user_input, options=user_input)
 
         return self.async_show_form(
             step_id="user",
@@ -59,19 +54,16 @@ class DelayedChargingConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return DelayedChargingOptionsFlow()
 
 
-class DelayedChargingOptionsFlow(config_entries.OptionsFlowWithReload):
+class DelayedChargingOptionsFlow(config_entries.OptionsFlow):
+    # TODO: change to OptionsFlowWithReload when Home Assistant supports it
     """Handle options flow for Delayed Charging."""
 
-    async def async_step_init(
-        self, user_input: dict[str, Any] | None = None
-    ) -> config_entries.ConfigFlowResult:
+    async def async_step_init(self, user_input: dict[str, Any] | None = None) -> config_entries.ConfigFlowResult:
         """Manage the options."""
         if user_input is not None:
             return self.async_create_entry(data=user_input)
 
         return self.async_show_form(
             step_id="init",
-            data_schema=self.add_suggested_values_to_schema(
-                SCHEMA, self.config_entry.options
-            ),
+            data_schema=self.add_suggested_values_to_schema(SCHEMA, self.config_entry.options),
         )
