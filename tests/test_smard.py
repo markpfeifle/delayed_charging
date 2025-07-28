@@ -3,12 +3,15 @@
 from datetime import datetime
 from typing import cast
 from unittest.mock import AsyncMock, MagicMock, patch
+from zoneinfo import ZoneInfo
 
 import pytest
 from aiohttp import ClientError, ClientPayloadError, web
 
-from custom_components.delayed_charging.service import SYSTEM_TZ
 from custom_components.delayed_charging.smard import get_pricing_info
+
+# We pretend the system tz to be Central European (Summer) Time
+CONSTANT_SYSTEM_TZ = ZoneInfo("Europe/Berlin")
 
 TIMESTAMPS_HAPPY = {
     "timestamps": [
@@ -36,7 +39,7 @@ INVALID_JSON = web.Response(text="Invalid JSON")
 @pytest.fixture
 def mock_datetime_now():
     real_datetime_class = datetime
-    fake_now = datetime(2025, 7, 28, 10, 15, 0, tzinfo=SYSTEM_TZ)
+    fake_now = datetime(2025, 7, 28, 10, 15, 0, tzinfo=CONSTANT_SYSTEM_TZ)
     with patch("custom_components.delayed_charging.smard.datetime.datetime") as mock_datetime:
         mock_datetime.now.return_value = fake_now
         mock_datetime.side_effect = lambda *args, **kwargs: datetime(*args, **kwargs)  # type: ignore
@@ -59,9 +62,9 @@ async def test_get_pricing_info_success(mock_datetime_now: MagicMock):
         assert result[0][1] == 15.0
         assert result[1][1] == 12.0
         assert result[2][1] == 18.0
-        assert result[0][0] == datetime(2025, 7, 28, 1, 0, 0, tzinfo=SYSTEM_TZ)
-        assert result[1][0] == datetime(2025, 7, 28, 2, 0, 0, tzinfo=SYSTEM_TZ)
-        assert result[2][0] == datetime(2025, 7, 28, 3, 0, 0, tzinfo=SYSTEM_TZ)
+        assert result[0][0] == datetime(2025, 7, 28, 1, 0, 0, tzinfo=CONSTANT_SYSTEM_TZ)
+        assert result[1][0] == datetime(2025, 7, 28, 2, 0, 0, tzinfo=CONSTANT_SYSTEM_TZ)
+        assert result[2][0] == datetime(2025, 7, 28, 3, 0, 0, tzinfo=CONSTANT_SYSTEM_TZ)
 
 
 async def test_get_pricing_info_invalid_country(mock_datetime_now: MagicMock):
