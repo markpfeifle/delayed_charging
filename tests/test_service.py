@@ -2,9 +2,9 @@
 
 import datetime
 from unittest.mock import MagicMock, patch
+from zoneinfo import ZoneInfo
 
 from custom_components.delayed_charging.service import (
-    SYSTEM_TZ,
     delayed_charging_is_active_today,
     dtfmt,
     get_charging_start,
@@ -13,20 +13,23 @@ from custom_components.delayed_charging.service import (
     ts2dt,
 )
 
+# We pretend the system tz to be Central European (Summer) Time
+CONSTANT_SYSTEM_TZ = ZoneInfo("Europe/Berlin")
+
 
 def test_ts2dt():
     """Test timestamp to datetime conversion."""
     # Test a known timestamp (2025-07-01 03:00:00)
     timestamp = 1751331600000  # milliseconds
-    expected_dt = datetime.datetime(2025, 7, 1, 3, 0, 0, tzinfo=SYSTEM_TZ)
+    expected_dt = datetime.datetime(2025, 7, 1, 3, 0, 0, tzinfo=CONSTANT_SYSTEM_TZ)
     assert ts2dt(timestamp) == expected_dt
 
 
 def test_same_date():
     """Test same_date function."""
-    dt1 = datetime.datetime(2025, 7, 28, 10, 0, 0, tzinfo=SYSTEM_TZ)
-    dt2 = datetime.datetime(2025, 7, 28, 15, 30, 0, tzinfo=SYSTEM_TZ)
-    dt3 = datetime.datetime(2025, 7, 29, 10, 0, 0, tzinfo=SYSTEM_TZ)
+    dt1 = datetime.datetime(2025, 7, 28, 10, 0, 0, tzinfo=CONSTANT_SYSTEM_TZ)
+    dt2 = datetime.datetime(2025, 7, 28, 15, 30, 0, tzinfo=CONSTANT_SYSTEM_TZ)
+    dt3 = datetime.datetime(2025, 7, 29, 10, 0, 0, tzinfo=CONSTANT_SYSTEM_TZ)
 
     assert same_date(dt1, dt2) is True
     assert same_date(dt1, dt3) is False
@@ -34,13 +37,13 @@ def test_same_date():
 
 def test_dtfmt():
     """Test datetime formatting."""
-    dt = datetime.datetime(2025, 7, 28, 10, 0, 0, tzinfo=SYSTEM_TZ)
+    dt = datetime.datetime(2025, 7, 28, 10, 0, 0, tzinfo=CONSTANT_SYSTEM_TZ)
     assert dtfmt(dt) == "2025-07-28 10-00-00"
 
 
 def test_get_charging_start():
     """Test get_charging_start function."""
-    midnight = datetime.datetime(2025, 7, 28, 0, 0, 0, tzinfo=SYSTEM_TZ)
+    midnight = datetime.datetime(2025, 7, 28, 0, 0, 0, tzinfo=CONSTANT_SYSTEM_TZ)
     timeseries = [
         (midnight, 15.0),
         (midnight + datetime.timedelta(hours=1), 12.0),
@@ -60,7 +63,7 @@ def test_get_charging_start():
 
 def test_delayed_charging_is_active_today():
     """Test delayed_charging_is_active_today function."""
-    midnight = datetime.datetime(2025, 7, 28, 0, 0, 0, tzinfo=SYSTEM_TZ)
+    midnight = datetime.datetime(2025, 7, 28, 0, 0, 0, tzinfo=CONSTANT_SYSTEM_TZ)
     timeseries = [
         (midnight, 15.0),
         (midnight + datetime.timedelta(hours=1), 12.0),
@@ -81,13 +84,13 @@ def test_delayed_charging_is_active_today():
 @patch("custom_components.delayed_charging.service.datetime")
 def test_get_current_price(mock_datetime: MagicMock):
     """Test get_current_price function."""
-    now = datetime.datetime(2025, 7, 28, 10, 15, 0, tzinfo=SYSTEM_TZ)
+    now = datetime.datetime(2025, 7, 28, 10, 15, 0, tzinfo=CONSTANT_SYSTEM_TZ)
     mock_datetime.datetime.now.return_value = now
 
     timeseries = [
-        (datetime.datetime(2025, 7, 28, 9, 0, 0, tzinfo=SYSTEM_TZ), 15.0),
-        (datetime.datetime(2025, 7, 28, 10, 0, 0, tzinfo=SYSTEM_TZ), 12.0),
-        (datetime.datetime(2025, 7, 28, 11, 0, 0, tzinfo=SYSTEM_TZ), 8.0),
+        (datetime.datetime(2025, 7, 28, 9, 0, 0, tzinfo=CONSTANT_SYSTEM_TZ), 15.0),
+        (datetime.datetime(2025, 7, 28, 10, 0, 0, tzinfo=CONSTANT_SYSTEM_TZ), 12.0),
+        (datetime.datetime(2025, 7, 28, 11, 0, 0, tzinfo=CONSTANT_SYSTEM_TZ), 8.0),
     ]
 
     # Test getting current price
