@@ -49,13 +49,12 @@ class DelayedChargingConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     @callback
     def async_get_options_flow(
         config_entry: config_entries.ConfigEntry,
-    ) -> config_entries.OptionsFlow:
+    ) -> config_entries.OptionsFlowWithReload:
         """Create the options flow."""
         return DelayedChargingOptionsFlow()
 
 
-class DelayedChargingOptionsFlow(config_entries.OptionsFlow):
-    # TODO: change to OptionsFlowWithReload when Home Assistant supports it
+class DelayedChargingOptionsFlow(config_entries.OptionsFlowWithReload):
     """Handle options flow for Delayed Charging."""
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> config_entries.ConfigFlowResult:
