@@ -30,7 +30,6 @@ class ElectricityPriceCoordinator(DataUpdateCoordinator[list[tuple[datetime.date
     async def _async_update_data(self):
         """Fetch data from API."""
         try:
-            # Check options first, fall back to data if not in options
             config_entry = cast(ConfigEntry, self.config_entry)
             country_id = config_entry.options.get(CONF_COUNTRY_ID, DEFAULT_COUNTRY_ID)
             return await get_pricing_info(country_id)

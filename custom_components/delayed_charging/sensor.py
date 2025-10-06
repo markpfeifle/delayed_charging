@@ -8,6 +8,7 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
+from custom_components.delayed_charging import DelayedChargingRuntimeData
 from custom_components.delayed_charging.const import DEFAULT_THRESH
 from custom_components.delayed_charging.coordinator import ElectricityPriceCoordinator
 from custom_components.delayed_charging.service import (
@@ -28,6 +29,7 @@ async def async_setup_entry(
             CurrentPriceSensor(coordinator),
         ]
     )
+    config_entry.runtime_data = DelayedChargingRuntimeData(coordinator=coordinator)
     await coordinator.async_config_entry_first_refresh()
 
 

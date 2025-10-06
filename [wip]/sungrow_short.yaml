@@ -1,0 +1,839 @@
+# Home Assistant Sungrow inverter integration
+# https://github.com/mkaiser/Sungrow-SHx-Inverter-Modbus-Home-Assistant
+# by Martin Kaiser
+#
+# last update: 2025-03-30
+#
+# Note: This YAML file will only work with Home Assistant >= 2024.10
+#
+
+modbus:
+  - name: SungrowSHx
+    type: tcp
+    host: !secret sungrow_modbus_host_ip
+    port: !secret sungrow_modbus_port
+    delay: 5
+    timeout: 10
+
+    sensors:
+      - name: Inverter temperature
+        unique_id: sg_inverter_temperature
+        device_address: !secret sungrow_modbus_slave
+        address: 5007 # reg 5008
+        input_type: input
+        data_type: int16
+        precision: 1
+        unit_of_measurement: °C
+        device_class: Temperature
+        state_class: measurement
+        scale: 0.1
+        scan_interval: 10
+
+      - name: Total DC power
+        unique_id: sg_total_dc_power
+        device_address: !secret sungrow_modbus_slave
+        address: 5016 # reg 5017
+        input_type: input
+        data_type: uint32
+        swap: word
+        precision: 0
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+        scale: 1
+        scan_interval: 10
+
+      - name: Running state
+        unique_id: sg_running_state
+        device_address: !secret sungrow_modbus_slave
+        address: 13000 # reg 13001
+        input_type: input
+        data_type: uint16
+        precision: 0
+        state_class: measurement
+        scale: 1
+        scan_interval: 10
+
+      - name: Load power
+        unique_id: sg_load_power
+        device_address: !secret sungrow_modbus_slave
+        address: 13007 # reg 13008
+        input_type: input
+        data_type: int32
+        swap: word
+        precision: 0
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+        scale: 1
+        scan_interval: 10
+
+      - name: Export power raw
+        unique_id: sg_export_power_raw
+        device_address: !secret sungrow_modbus_slave
+        address: 13009 # reg 13010
+        input_type: input
+        data_type: int32
+        swap: word
+        precision: 0
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+        scale: 1
+        scan_interval: 10
+
+      - name: Battery power raw
+        unique_id: sg_battery_power_raw
+        device_address: !secret sungrow_modbus_slave
+        address: 13021 # reg 13022
+        input_type: input
+        data_type: int16 #updated to signed int, see issue #406
+        precision: 0
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+        scale: 1
+        scan_interval: 10
+
+      - name: Battery level
+        unique_id: sg_battery_level
+        device_address: !secret sungrow_modbus_slave
+        address: 13022 # reg 13023
+        input_type: input
+        data_type: uint16
+        precision: 1
+        unit_of_measurement: "%"
+        device_class: battery
+        state_class: measurement
+        scale: 0.1
+        scan_interval: 60
+
+      - name: Battery state of health
+        unique_id: sg_battery_state_of_health
+        device_address: !secret sungrow_modbus_slave
+        address: 13023 # reg 13024
+        input_type: input
+        data_type: uint16
+        precision: 0
+        unit_of_measurement: "%"
+        state_class: measurement
+        scale: 0.1
+        scan_interval: 600
+
+      - name: Battery temperature
+        unique_id: sg_battery_temperature
+        device_address: !secret sungrow_modbus_slave
+        address: 13024 # reg 13025
+        input_type: input
+        data_type: int16
+        precision: 1
+        unit_of_measurement: °C
+        device_class: Temperature
+        state_class: measurement
+        scale: 0.1
+        scan_interval: 60
+
+      - name: Total active power
+        unique_id: sg_total_active_power
+        device_address: !secret sungrow_modbus_slave
+        address: 13033 # reg 13034
+        input_type: input
+        data_type: int32
+        swap: word
+        precision: 0
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+        scale: 1
+        scan_interval: 10
+
+      - name: EMS mode selection raw
+        unique_id: sg_ems_mode_selection_raw
+        device_address: !secret sungrow_modbus_slave
+        address: 13049 # reg 13050
+        input_type: holding
+        data_type: uint16
+        state_class: measurement
+        scan_interval: 10
+
+      - name: Battery forced charge discharge cmd raw
+        unique_id: sg_battery_forced_charge_discharge_cmd_raw
+        device_address: !secret sungrow_modbus_slave
+        address: 13050 # reg 13051
+        input_type: holding
+        data_type: uint16
+        precision: 0
+        state_class: measurement
+        scan_interval: 10
+
+      - name: Max SoC
+        unique_id: sg_max_soc
+        device_address: !secret sungrow_modbus_slave
+        address: 13057 # reg 13058
+        input_type: holding
+        data_type: uint16
+        precision: 1
+        unit_of_measurement: "%"
+        device_class: battery
+        state_class: measurement
+        scale: 0.1
+        scan_interval: 10
+
+      - name: Min SoC
+        unique_id: sg_min_soc
+        device_address: !secret sungrow_modbus_slave
+        address: 13058 # reg 13059
+        input_type: holding
+        data_type: uint16
+        precision: 1
+        unit_of_measurement: "%"
+        device_class: battery
+        state_class: measurement
+        scale: 0.1
+        scan_interval: 10
+
+      - name: Reserved SoC for backup
+        unique_id: sg_reserved_soc_for_backup
+        device_address: !secret sungrow_modbus_slave
+        address: 13099 # reg 13100
+        input_type: holding
+        data_type: uint16
+        unit_of_measurement: "%"
+        device_class: battery
+        state_class: measurement
+        scale: 1
+        scan_interval: 10
+
+      - name: Battery max charge power
+        unique_id: sg_battery_max_charge_power
+        device_address: !secret sungrow_modbus_slave
+        address: 33046 # reg 33047
+        input_type: holding
+        data_type: uint16
+        precision: 0
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+        scale: 10
+        scan_interval: 10
+
+      - name: Battery max discharge power
+        unique_id: sg_battery_max_discharge_power
+        device_address: !secret sungrow_modbus_slave
+        address: 33047 # reg 33048
+        input_type: holding
+        data_type: uint16
+        precision: 0
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+        scale: 10
+        scan_interval: 10
+
+      - name: Battery charging start power
+        unique_id: sg_battery_charging_start_power
+        device_address: !secret sungrow_modbus_slave
+        address: 33148 # reg 33149
+        input_type: holding
+        data_type: uint16
+        precision: 0
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+        scale: 10
+        scan_interval: 10
+
+template:
+  - binary_sensor:
+      - name: Battery charging
+        unique_id: sg_battery_charging
+        # TODO: test more with these parameters for template binary sensors
+        # device_class: none / power
+        # state_class: measurement
+        availability: >-
+          {{
+          not is_state('sensor.running_state', 'unavailable')
+          or
+            (   not is_state('sensor.ems_mode_selection_raw', 'unavailable')
+            and not is_state('sensor.battery_forced_charge_discharge_cmd_raw', 'unavailable')
+            and not is_state('sensor.battery_power_raw', 'unavailable')
+            and not is_state('sensor.total_dc_power', 'unavailable')
+            and not is_state('sensor.load_power', 'unavailable')
+            )
+          }}
+        state: >-
+          {% if states('sensor.running_state')|is_number and states('sensor.running_state')|float > 0 %}
+            {# use available sensor running_state #}
+            {% if states('sensor.running_state')|int|bitwise_and(0x2) > 0 %}
+              on
+            {% else %}
+              off
+            {% endif %}
+          {% else %}
+            {# workaround for SH*RS inverters without working running_state #}
+            {% if (states('sensor.ems_mode_selection') ) == "Forced mode" %}
+              {# EMS forced mode #}
+              {% if (states('sensor.battery_forced_charge_discharge_cmd') == "Forced charge") %}
+                {# in mode Forced charge #}
+                {% if (states('sensor.battery_power_raw')|int > 0 ) %}
+                  {# power flow from/to battery #}
+                  on
+                {% else %}
+                  {# no power flow from/to battery #}
+                  off
+                {% endif %}
+              {% else %}
+                {# in EMS mode, but not in mode Forced charge #}
+                off
+              {% endif %}
+            {% else %}
+              {# not in EMS forced mode, assuming self consumption mode #}
+              {% if states('sensor.total_dc_power')|int > states('sensor.load_power')|int %}
+                {# more power generated than consumed. assuming battery charging #}
+                on
+              {% else %}
+                off
+              {% endif %}
+            {% endif %}
+          {% endif %}
+
+      - name: Battery charging (delay)
+        unique_id: sg_battery_charging_delay
+        # TODO: test more with these parameters for template binary sensors
+        # device_class: none / power
+        # state_class: measurement
+        availability: "{{ not is_state('binary_sensor.battery_charging', 'unavailable') }}"
+        delay_on:
+          seconds: 60
+        state: "{{ states('binary_sensor.battery_charging') }}"
+
+      - name: Battery discharging
+        unique_id: sg_battery_discharging
+        # TODO: test more with these parameters for template binary sensors
+        # device_class: none / power
+        # state_class: measurement
+        availability: >-
+          {{
+          not is_state('sensor.running_state', 'unavailable')
+          or
+            (   not is_state('sensor.ems_mode_selection_raw', 'unavailable')
+            and not is_state('sensor.battery_forced_charge_discharge_cmd_raw', 'unavailable')
+            and not is_state('sensor.battery_power_raw', 'unavailable')
+            and not is_state('sensor.total_dc_power', 'unavailable')
+            and not is_state('sensor.load_power', 'unavailable')
+            )
+          }}
+        state: >-
+          {% if states('sensor.running_state')|is_number and states('sensor.running_state')|float > 0 %}
+            {# use available sensor running_state #}
+            {% if states('sensor.running_state')|int|bitwise_and(0x4) > 0 %}
+              on
+            {% else %}
+              off
+            {% endif %}
+          {% else %}
+            {# workaround for SH*RS inverters without working running_state #}
+            {% if (states('sensor.ems_mode_selection') ) == "Forced mode" %}
+              {# EMS forced mode #}
+              {% if (states('sensor.battery_forced_charge_discharge_cmd') == "Forced discharge") %}
+                {# in mode Forced discharge #}
+                {% if (states('sensor.battery_power_raw')|int > 0 ) %}
+                  {# power flow from/to battery #}
+                  on
+                {% else %}
+                  {# no power flow from/to battery #}
+                  off
+                {% endif %}
+              {% else %}
+                {# in EMS mode, but not in mode Forced charge #}
+                off
+              {% endif %}
+            {% else %}
+              {# not in EMS forced mode, assuming self consumption mode #}
+              {% if ( ( states('sensor.total_dc_power')|int < states('sensor.load_power')|int ) ) and states('sensor.battery_power_raw')|int > 0 %}
+                {# more power consumed than generated and some battery power --> assuming battery discharging #}
+                on
+              {% else %}
+                off
+              {% endif %}
+            {% endif %}
+          {% endif %}
+
+      - name: Battery discharging (delay)
+        unique_id: sg_battery_discharging_delay
+        # TODO: test more with these parameters for template binary sensors
+        # device_class: none / power
+        # state_class: measurement
+        availability: "{{ not is_state('binary_sensor.battery_discharging', 'unavailable') }}"
+        delay_on:
+          seconds: 60
+        state: "{{ states('binary_sensor.battery_discharging') }}"
+
+      - name: Exporting power
+        unique_id: sg_exporting_power
+        # TODO: test more with these parameters for template binary sensors
+        # device_class: none / power
+        # state_class: measurement
+        availability: >-
+          {{
+          not is_state('sensor.running_state', 'unavailable')
+          and not is_state('sensor.export_power_raw', 'unavailable')
+          }}
+        state: >-
+          {% if states('sensor.running_state')|is_number and states('sensor.running_state')|float > 0 %}
+            {# use available sensor running_state #}
+            {{ states('sensor.running_state')|int|bitwise_and(0x10) > 0 }}
+          {% else %}
+            {# workaround for SH*RS inverters without working running_state #}
+            {% if states('sensor.export_power_raw')|int > 0 %}
+              1
+            {% else %}
+              0
+            {% endif %}
+          {% endif %}
+
+      - name: Exporting power (delay)
+        unique_id: sg_exporting_power_delay
+        # TODO: test more with these parameters for template binary sensors
+        # device_class: none / power
+        # state_class: measurement
+        availability: "{{ not is_state('binary_sensor.exporting_power', 'unavailable') }}"
+        delay_on:
+          seconds: 60
+        state: "{{ states('binary_sensor.exporting_power') }}"
+
+      - name: Importing power
+        unique_id: sg_importing_power
+        # TODO: test more with these parameters for template binary sensors
+        # device_class: none / power
+        # state_class: measurement
+        availability: >-
+          {{
+          not is_state('sensor.running_state', 'unavailable')
+          and not is_state('sensor.running_state', 'unavailable')
+          }}
+        state: >-
+          {% if states('sensor.running_state')|is_number and states('sensor.running_state')|float > 0 %}
+            {# use available sensor running_state #}
+            {{ states('sensor.running_state')|int|bitwise_and(0x20) > 0 }}
+          {% else %}
+            {# workaround for SH*RS inverters without working running_state #}
+            {% if states('sensor.export_power_raw')|int < 0 %}
+              1
+            {% else %}
+              0
+            {% endif %}
+          {% endif %}
+
+      - name: Importing power (delay)
+        unique_id: sg_importing_power_delay
+        # TODO: test more with these parameters for template binary sensors
+        # device_class: none / power
+        # state_class: measurement
+        availability: "{{ not is_state('binary_sensor.importing_power', 'unavailable') }}"
+        delay_on:
+          seconds: 60
+        state: "{{ states('binary_sensor.importing_power') }}"
+
+  - sensor:
+      # make the sensor battery_forced_charge_discharge_cmd more human readable
+      # Inverter States from modbus reference manual
+      # 0xAA forced charge
+      # 0xBB forced discharge
+      # 0xCC Stop (default)
+      - name: Battery forced charge discharge cmd
+        unique_id: sg_battery_forced_charge_discharge_cmd
+        availability: "{{ not is_state('sensor.battery_forced_charge_discharge_cmd_raw', 'unavailable') }}"
+        # TODO: test state_class with enum
+        # state_class: measurement
+        device_class: enum
+        state: >-
+          {% if ((states('sensor.battery_forced_charge_discharge_cmd_raw') |int) == 0x00AA) %}
+            Forced charge
+          {% elif ((states('sensor.battery_forced_charge_discharge_cmd_raw') |int)  == 0x00BB) %}
+            Forced discharge
+          {% elif ((states('sensor.battery_forced_charge_discharge_cmd_raw') |int)  == 0x00CC) %}
+            Stop (default)
+          {% else %}
+            Unknown - should not see me! code: {{ (states('sensor.battery_forced_charge_discharge_cmd_raw') |int) }}
+          {% endif %}
+
+      # make the sensor ems_selection_raw more human readable
+      - name: EMS mode selection
+        unique_id: sg_ems_mode_selection
+        availability: "{{ not is_state('sensor.ems_mode_selection_raw', 'unavailable') }}"
+        device_class: enum
+        state: >-
+          {% if ((states('sensor.ems_mode_selection_raw') |int) == 0) %}
+            Self-consumption mode (default)
+          {% elif ((states('sensor.ems_mode_selection_raw') |int) == 2) %}
+            Forced mode
+          {% elif ((states('sensor.ems_mode_selection_raw') |int) == 3) %}
+            External EMS
+          {% elif ((states('sensor.ems_mode_selection_raw') |int) == 4) %}
+            VPP
+          {% elif ((states('sensor.ems_mode_selection_raw') |int) == 8) %}
+            MicroGrid
+          {% else %}
+            Unknown - should not see me! code: {{ (states('sensor.ems_mode_selection_raw') |int) }}
+          {% endif %}
+
+      - name: Battery charging power
+        unique_id: sg_battery_charging_power
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+        availability: >-
+          {{
+          not is_state('binary_sensor.battery_charging', 'unavailable')
+          and not is_state('sensor.battery_power_raw', 'unavailable')
+          }}
+        state: >-
+          {% if is_state('binary_sensor.battery_charging', 'on') %}
+            {{ states('sensor.battery_power_raw')|int |abs }}
+          {% else %}
+            0
+          {% endif %}
+
+      - name: Battery discharging power
+        unique_id: sg_battery_discharging_power
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+        availability: >-
+          {{
+          not is_state('binary_sensor.battery_discharging', 'unavailable')
+          and not is_state('sensor.battery_power_raw', 'unavailable')
+          }}
+        state: >-
+          {% if is_state('binary_sensor.battery_discharging', 'on') %}
+            {{ states('sensor.battery_power_raw')|int |abs }}
+          {% else %}
+            0
+          {% endif %}
+
+      # Import/Export power sensors
+      - name: Import power
+        unique_id: sg_import_power
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+        availability: "{{ not is_state('sensor.export_power_raw', 'unavailable') }}"
+        state: >-
+          {% if states('sensor.export_power_raw')|int < 0 %}
+            {{ states('sensor.export_power_raw')|int *-1 }}
+          {% else %}
+            0
+          {% endif %}
+
+      - name: Export power
+        unique_id: sg_export_power
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+        availability: "{{states('sensor.export_power_raw')|is_number }}"
+        state: >-
+          {% if states('sensor.export_power_raw')|int > 0 %}
+            {{ states('sensor.export_power_raw') }}
+          {% else %}
+            0
+          {% endif %}
+
+      # Battery level calculations
+      - name: "Battery level (nominal)"
+        unique_id: sg_battery_level_nom
+        unit_of_measurement: "%"
+        device_class: battery
+        state_class: measurement
+        availability: >-
+          {{
+          not is_state('sensor.battery_level', 'unavailable')
+          and not is_state('sensor.min_soc', 'unavailable')
+          and not is_state('sensor.max_soc', 'unavailable')
+          }}
+        state: >-
+          {% set soc_min = states('sensor.min_soc') | float %}
+          {% set soc_max = states('sensor.max_soc') | float %}
+          {% set soc_cur = states('sensor.battery_level') | float %}
+          {{
+            (soc_min + ((soc_max - soc_min) * (soc_cur / 100))) | round(1)
+          }}
+
+# getting input for Min and Max SoC
+input_number:
+  set_sg_min_soc:
+    name: Min SoC (%)
+    min: 0
+    max: 50
+    step: 1
+
+  set_sg_max_soc:
+    name: Max SoC (%)
+    min: 50
+    max: 100
+    step: 1
+
+  set_sg_reserved_soc_for_backup:
+    name: Reserved SoC for backup (%)
+    min: 0
+    max: 100
+    step: 1
+
+  set_sg_battery_max_charge_power:
+    name: Max battery charge power (W)
+    min: 100
+    max: 5000 # change this value according to the capability of your battery
+    step: 100
+
+  set_sg_battery_max_discharge_power:
+    name: Max battery discharge power (W)
+    min: 10
+    max: 5000 # change this value according to the capability of your battery
+    step: 100
+
+  set_sg_battery_charging_start_power:
+    name: Battery charging start power (W)
+    min: 0
+    max: 1000
+    step: 10
+
+automation:
+  - id: "automation_sungrow_inverter_update_max_soc"
+    alias: "sungrow inverter update max SoC"
+    description: "Updates Sungrow max Soc holding register"
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_number.set_sg_max_soc
+    conditions: []
+    actions:
+      - action: modbus.write_register
+        data_template:
+          hub: SungrowSHx
+          slave: !secret sungrow_modbus_slave
+          address: 13057 # reg 13058
+          value: "{{ states('input_number.set_sg_max_soc') | int *10}}"
+      - action: homeassistant.update_entity
+        # immediate update the sensor to reflect the new value, not waiting for the next scheduled update
+        data:
+          entity_id:
+            - sensor.max_soc
+    mode: single
+
+  - id: "automation_sungrow_inverter_update_max_soc_input_slider_update"
+    alias: "sungrow inverter max SoC input slider update"
+    description: "Updates Sungrow max Soc input slider"
+    triggers:
+      - trigger: state
+        entity_id:
+          - sensor.max_soc
+    conditions:
+      - condition: template
+        value_template: "{{ not is_state('sensor.max_soc', 'unavailable') }}"
+    actions:
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.set_sg_max_soc
+        data:
+          value: "{{ states('sensor.max_soc') }}"
+    mode: single
+
+  - id: "automation_sungrow_inverter_update_min_soc"
+    alias: "sungrow inverter update min SoC"
+    description: "Updates Sungrow min Soc holding register"
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_number.set_sg_min_soc
+    conditions: []
+    actions:
+      - action: modbus.write_register
+        data_template:
+          hub: SungrowSHx
+          slave: !secret sungrow_modbus_slave
+          address: 13058 # reg 13059
+          value: "{{ states('input_number.set_sg_min_soc') | int *10}}"
+      - action: homeassistant.update_entity
+        # immediate update the sensor to reflect the new value, not waiting for the next scheduled update
+        data:
+          entity_id:
+            - sensor.min_soc
+    mode: single
+
+  - id: "automation_sungrow_inverter_update_min_soc_input_slider_update"
+    alias: "sungrow inverter min SoC input slider update"
+    description: "Updates Sungrow min Soc input slider"
+    triggers:
+      - trigger: state
+        entity_id:
+          - sensor.min_soc
+    conditions:
+      - condition: template
+        value_template: "{{ not is_state('sensor.min_soc', 'unavailable') }}"
+    actions:
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.set_sg_min_soc
+        data:
+          value: "{{ states('sensor.min_soc') }}"
+    mode: single
+
+  - id: "automation_sungrow_inverter_update_reserved_soc_for_backup"
+    alias: "sungrow inverter update reserved soc for backup"
+    description: "Updates reserved SoC for backup register"
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_number.set_sg_reserved_soc_for_backup
+    conditions: []
+    actions:
+      - action: modbus.write_register
+        data_template:
+          hub: SungrowSHx
+          slave: !secret sungrow_modbus_slave
+          address: 13099 # reg 13100
+          value: "{{ states('input_number.set_sg_reserved_soc_for_backup') | int}}"
+      - action: homeassistant.update_entity
+        # immediate update the sensor to reflect the new value, not waiting for the next scheduled update
+        data:
+          entity_id:
+            - sensor.reserved_soc_for_backup
+    mode: single
+
+  - id: "automation_sungrow_inverter_update_reserved_backup_soc_input_slider_update"
+    alias: "sungrow inverter reserved backup SoC input slider update"
+    description: "Updates Sungrow reserved backup Soc input slider"
+    triggers:
+      - trigger: state
+        entity_id:
+          - sensor.reserved_soc_for_backup
+    conditions:
+      - condition: template
+        value_template: "{{ not is_state('sensor.reserved_soc_for_backup', 'unavailable') }}"
+    actions:
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.set_sg_reserved_soc_for_backup
+        data:
+          value: "{{ states('sensor.reserved_soc_for_backup') }}"
+    mode: single
+
+  - id: "automation_sungrow_inverter_update_battery_max_charge_power"
+    alias: "sungrow inverter update battery max charge power"
+    description: "Sets battery max charge power"
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_number.set_sg_battery_max_charge_power
+    conditions: []
+    actions:
+      - action: modbus.write_register
+        data_template:
+          hub: SungrowSHx
+          slave: !secret sungrow_modbus_slave
+          address: 33046 # reg 33047
+          value: "{{ states('input_number.set_sg_battery_max_charge_power') |float /10 |int}}"
+      - action: homeassistant.update_entity
+        # immediate update the sensor to reflect the new value, not waiting for the next scheduled update
+        data:
+          entity_id:
+            - sensor.battery_max_charge_power
+    mode: single
+
+  - id: "automation_sungrow_inverter_update_battery_max_charge_power_input_slider_update"
+    alias: "sungrow inverter update battery max charge power input slider update"
+    description: "Updates battery max charge power input slider"
+    triggers:
+      - trigger: state
+        entity_id:
+          - sensor.battery_max_charge_power
+    conditions:
+      - condition: template
+        value_template: "{{ not is_state('sensor.battery_max_charge_power', 'unavailable') }}"
+    actions:
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.set_sg_battery_max_charge_power
+        data:
+          value: "{{ states('sensor.battery_max_charge_power') }}"
+    mode: single
+
+  - id: "automation_sungrow_inverter_update_battery_max_discharge_power"
+    alias: "sungrow inverter update battery max discharge power"
+    description: "Sets battery max discharge power"
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_number.set_sg_battery_max_discharge_power
+    conditions: []
+    actions:
+      - action: modbus.write_register
+        data_template:
+          hub: SungrowSHx
+          slave: !secret sungrow_modbus_slave
+          address: 33047 # reg 33048
+          value: "{{ states('input_number.set_sg_battery_max_discharge_power')  |float /10 |int}}"
+      - action: homeassistant.update_entity
+        # immediate update the sensor to reflect the new value, not waiting for the next scheduled update
+        data:
+          entity_id:
+            - sensor.battery_max_discharge_power
+    mode: single
+
+  - id: "automation_sungrow_inverter_update_battery_max_discharge_power_input_slider_update"
+    alias: "sungrow inverter update battery max discharge power input slider update"
+    description: "Updates battery max discharge power input slider"
+    triggers:
+      - trigger: state
+        entity_id:
+          - sensor.battery_max_discharge_power
+    conditions:
+      - condition: template
+        value_template: "{{ not is_state('sensor.battery_max_discharge_power', 'unavailable') }}"
+    actions:
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.set_sg_battery_max_discharge_power
+        data:
+          value: "{{ states('sensor.battery_max_discharge_power') }}"
+    mode: single
+
+  - id: "automation_sungrow_inverter_update_battery_charging_start_power"
+    alias: "sungrow inverter update battery charging start power"
+    description: "Sets battery charging start power"
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_number.set_sg_battery_charging_start_power
+    conditions: []
+    actions:
+      - action: modbus.write_register
+        data_template:
+          hub: SungrowSHx
+          slave: !secret sungrow_modbus_slave
+          address: 33148 # reg 33149
+          value: "{{ states('input_number.set_sg_battery_charging_start_power') |float /10 |int}}"
+      - action: homeassistant.update_entity
+        # immediate update the sensor to reflect the new value, not waiting for the next scheduled update
+        data:
+          entity_id:
+            - sensor.battery_charging_start_power
+    mode: single
+
+  - id: "automation_sungrow_inverter_update_battery_charging_start_power_input_slider_update"
+    alias: "sungrow inverter update battery charging start power input slider update"
+    description: "Updates battery charging start power input slider"
+    triggers:
+      - trigger: state
+        entity_id:
+          - sensor.battery_charging_start_power
+    conditions:
+      - condition: template
+        value_template: "{{ not is_state('sensor.battery_charging_start_power', 'unavailable') }}"
+    actions:
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.set_sg_battery_charging_start_power
+        data:
+          value: "{{ states('sensor.battery_charging_start_power') }}"
+    mode: single

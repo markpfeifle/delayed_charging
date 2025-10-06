@@ -45,12 +45,12 @@ def get_current_price(
     timeseries: list[tuple[datetime.datetime, float]],
 ) -> float | None:
     now = datetime.datetime.now(SYSTEM_TZ)
-    relative_time_series_in_past = [(now - dt, price) for dt, price in timeseries if dt <= now]
+    prices_in_the_past = [price for dt, price in timeseries if dt <= now]
 
-    if len(relative_time_series_in_past) == 0:
+    if len(prices_in_the_past) == 0:
         _LOGGER.error("No current price data available.")
         return None
     else:
-        current_price = relative_time_series_in_past[-1][1]
+        current_price = prices_in_the_past[-1]
         _LOGGER.debug("Current price: %s", current_price)
         return current_price

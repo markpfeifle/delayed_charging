@@ -1,8 +1,12 @@
 """The Delayed Charging integration."""
 
+from dataclasses import dataclass
+
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
+
+from custom_components.delayed_charging.coordinator import ElectricityPriceCoordinator
 
 from .const import DOMAIN
 
@@ -24,3 +28,8 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if unload_ok:
         hass.data[DOMAIN].pop(entry.entry_id)
     return unload_ok
+
+
+@dataclass
+class DelayedChargingRuntimeData:
+    coordinator: ElectricityPriceCoordinator
